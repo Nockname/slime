@@ -1,30 +1,9 @@
 import random
 import math
 import numpy as np
+from numba import jit
 
-#setting numb of slimes and pixels in grid
-
-WIDTH=50
-HEIGHT=50
-SLIMES=10
-MOVELENGTH=5
-
-#setting start coords
-
-START_X=25
-START_Y=25
-
-#creating arrays for the coords and direction of each slime. also for strength of trail for each coord
-
-TRAILSTRENGTH=10
-DEGREECHANGE=0.5
-
-LOOK=10
-
-xSlime=np.array([START_X for _ in range(SLIMES)])
-ySlime=np.array([START_Y for _ in range(SLIMES)])
-direction=np.array([random.uniform(0, math.pi*2) for _ in range(SLIMES)])
-trail=np.array([0 for _ in range(WIDTH*HEIGHT)])
+from settings import *
 
 def CoordsToIndex(xCord, yCord):
     result=xCord+yCord*WIDTH
@@ -66,36 +45,34 @@ def Update(xSlime, ySlime, direction, trail): # TODO: add path of trail
 
     #change direction for next run if there is a trail at most LOOK away from slime
 
-    for i in range(SLIMES):
+    # for i in range(SLIMES):
 
-        slimeIndex=CoordsToIndex(xSlime[i], ySlime[i])
-        surroundingTrailStrength=[]
-        indexOfSurroundingTrailStrength=[]
+    #     slimeIndex=CoordsToIndex(xSlime[i], ySlime[i])
+    #     surroundingTrailStrength=[]
+    #     indexOfSurroundingTrailStrength=[]
 
-        #cycles through all cords in sqare shape with radius look to see if they are in range
+    #     #cycles through all cords in sqare shape with radius look to see if they are in range
 
-        for xMovement in range(-LOOK, LOOK+1):
-            for yMovement in range(-LOOK*WIDTH, LOOK*WIDTH+1, WIDTH):
-                possibleIndex=xMovement+yMovement+slimeIndex
+    #     for xMovement in range(-LOOK, LOOK+1):
+    #         for yMovement in range(-LOOK*WIDTH, LOOK*WIDTH+1, WIDTH):
+    #             possibleIndex=xMovement+yMovement+slimeIndex
 
-                #checks to see if they are at most LOOK away from slime
+    #             #checks to see if they are at most LOOK away from slime
 
-                if distanceIndex(slimeIndex, possibleIndex):
-                    surroundingTrailStrength.append(trail[possibleIndex])
-                    indexOfSurroundingTrailStrength.append(possibleIndex)
+    #             if distanceIndex(slimeIndex, possibleIndex):
+    #                 surroundingTrailStrength.append(trail[possibleIndex])
+    #                 indexOfSurroundingTrailStrength.append(possibleIndex)
 
-        #sees which trail around it has highest strength. finds the coords of that trail and points slime towards it
+    #     #sees which trail around it has highest strength. finds the coords of that trail and points slime towards it
 
-        if max(surroundingTrailStrength)>0:
+    #     if max(surroundingTrailStrength)>0:
 
-            goalIndex=surroundingTrailStrength.index(max(surroundingTrailStrength))
-            goalIndex=indexOfSurroundingTrailStrength[goalIndex]
+    #         goalIndex=surroundingTrailStrength.index(max(surroundingTrailStrength))
+    #         goalIndex=indexOfSurroundingTrailStrength[goalIndex]
 
-            xGoal, yGoal=IndexToCoords(goalIndex)
+    #         xGoal, yGoal=IndexToCoords(goalIndex)
 
-            direction[i]=random.uniform(-DEGREECHANGE, DEGREECHANGE)+math.atan2(yGoal-ySlime[i], xGoal-xSlime[i])
+    #         direction[i]=random.uniform(-DEGREECHANGE, DEGREECHANGE)+math.atan2(yGoal-ySlime[i], xGoal-xSlime[i])
 
         return (xSlime, ySlime, direction, trail)
 
-for _ in range(4):
-    xSlime, ySlime, direction, trail=Update(xSlime, ySlime, direction, trail)
